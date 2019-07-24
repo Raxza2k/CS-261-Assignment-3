@@ -200,6 +200,13 @@ int containsBSTree(struct BSTree *tree, TYPE val)
 /*----------------------------------------------------------------------------*/
 TYPE _leftMost(struct Node *cur)
 {
+	/*
+	assert(cur != NULL);
+	if(cur->left != NULL){
+		_leftMost(cur->left);			//recursive function call to find the leftmost child of the initially given node
+	}
+	return (cur->val);
+	*/
     /*write this*/
     return NULL;
 }
@@ -219,6 +226,9 @@ Note:  If you do this iteratively, the above hint does not apply.
 /*----------------------------------------------------------------------------*/
 struct Node *_removeLeftMost(struct Node *cur)
 {
+	/*
+	_leftMost(cur);
+	*/
     /*write this*/
     return NULL;
 }
