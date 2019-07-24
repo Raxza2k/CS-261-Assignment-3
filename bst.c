@@ -185,6 +185,18 @@ element
 /*----------------------------------------------------------------------------*/
 int containsBSTree(struct BSTree *tree, TYPE val)
 {
+	/*
+	struct Node* cur = tree->root;
+	assert(tree != NULL && val != NULL);
+	if(cur == NULL)
+		return;
+	containsBSTree(cur->left, val);
+	//check node value, and if the value is not the one being searched for call containsBSTree again with left child until no more left children
+	containsBSTree(cur->right, val);
+	//check node value again, if not in node recursively call containsBSTree until leaf node
+	//if no node has the value,
+	return 0;
+	*/
     /*write this*/
     return 0;
 }
