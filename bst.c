@@ -1,6 +1,6 @@
 /***********************************************************
 * Author: Cooper Smith, Anthony Minniti, Gabe Schafman
-* Email:
+* Email: smithcoo@oregonstate.edu, minnitan@oregonstate.edu,
 * Date Created: 22 July, 2019
 * Filename: bst.c
 *
@@ -137,20 +137,26 @@ int sizeBSTree(struct BSTree *tree) { return tree->cnt; }
  		val	the value to be added to the binary search tree
  pre:	val is not null
  */
-struct Node *_addNode(struct Node *cur, TYPE val)
+struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to use compare function
 {
-    struct Node* newNode = malloc(sizeof(struct Node));
+    struct Node* newNode;
     assert(newNode != 0);
     if(cur == NULL){
+		newNode = malloc(sizeof(struct Node));
         newNode->val = val;
+		newNode->left = NULL;
+		newNode->right = NULL;
         return newNode;
     }
-    else if (val <= cur->val){
+    else if (compare(val, cur->val) == -1){	//this if statement guides down the left subtree of the current node
         _addNode(cur->left, val);
     }
-    else{
+    else if(compare(val, cur->val) == 1){	//guides down the right subtree of the current node
         _addNode(cur->right, val);
     }
+	else if(compare(val, cur->val) == 0){	//BST has no duplicate values thus rejects all attempts at inputting a duplicate value
+		printf("Duplicate node values, value not inserted.\n");
+	}
     return cur;
 }
 
@@ -191,10 +197,16 @@ int containsBSTree(struct BSTree *tree, TYPE val)
 	if(cur == NULL)
 		return;
 	containsBSTree(cur->left, val);
-	//check node value, and if the value is not the one being searched for call containsBSTree again with left child until no more left children
+	if(compare(val, cur->val) == 0){
+		return 1;
+	}//check node value, and if the value is not the one being searched for call containsBSTree again with left child until no more left children
 	containsBSTree(cur->right, val);
-	//check node value again, if not in node recursively call containsBSTree until leaf node
-	//if no node has the value,
+	if(compare(val, cur->val) == 0){
+	 	return 1;
+ 	}//check node value again, if not in node recursively call containsBSTree until leaf node
+	if(cur == tree->root){
+		printf("Value not in BST.\n");
+	}//if no node has the value,
 	return 0;
 	*/
     /*write this*/
