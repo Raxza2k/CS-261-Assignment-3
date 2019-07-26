@@ -155,7 +155,11 @@ struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to
         _addNode(cur->right, val);
     }
 	else if(compare(val, cur->val) == 0){	//BST has no duplicate values thus rejects all attempts at inputting a duplicate value
-		printf("Duplicate node values, value not inserted.\n");
+		newNode = malloc(sizeof(struct Node));	//creates the new node
+        newNode->val = val;						//sets the new node value
+		newNode->left = cur->left;				//connects the new node left pointer to the node that will be below it
+		newNode->right = NULL;					//sets new node right pointer to NULL
+		cur->left = newNode;					//sets cur node left pointer to the newly made node
 	}
     return cur;
 }
@@ -191,7 +195,6 @@ element
 /*----------------------------------------------------------------------------*/
 int containsBSTree(struct BSTree *tree, TYPE val)
 {
-	/*
 	struct Node* cur = tree->root;
 	assert(tree != NULL && val != NULL);
 	if(cur == NULL)
@@ -208,7 +211,6 @@ int containsBSTree(struct BSTree *tree, TYPE val)
 		printf("Value not in BST.\n");
 	}//if no node has the value,
 	return 0;
-	*/
     /*write this*/
     return 0;
 }
@@ -224,15 +226,13 @@ int containsBSTree(struct BSTree *tree, TYPE val)
 /*----------------------------------------------------------------------------*/
 TYPE _leftMost(struct Node *cur)
 {
-	/*
+
 	assert(cur != NULL);
 	if(cur->left != NULL){
 		_leftMost(cur->left);			//recursive function call to find the leftmost child of the initially given node
 	}
 	return (cur->val);
-	*/
-    /*write this*/
-    return NULL;
+
 }
 
 
@@ -250,9 +250,18 @@ Note:  If you do this iteratively, the above hint does not apply.
 /*----------------------------------------------------------------------------*/
 struct Node *_removeLeftMost(struct Node *cur)
 {
-	/*
-	_leftMost(cur);
-	*/
+	assert(cur != NULL);
+	struct Node* temp;							//creates a temp pointer to keep track of leftmost node
+	temp->left = _leftMost(cur);						//gets the leftmost node (in theory)
+	if(temp->left->right == NULL){
+		free(temp->left);
+		temp->left = NULL;
+	}
+	else if(temp->left->right != NULL){
+		struct Node* temp2 = temp->left->right;
+		free(temp->left);
+		temp->left = temp2;
+	}
     /*write this*/
     return NULL;
 }
@@ -267,6 +276,19 @@ struct Node *_removeLeftMost(struct Node *cur)
 /*----------------------------------------------------------------------------*/
 struct Node *_removeNode(struct Node *cur, TYPE val)
 {
+	assert(cur != NULL && val != NULL);
+	struct Node* tempLeft, tempRight;
+	if(cur == NULL)
+		return;
+	if(compare(val, cur->val) == -1){
+
+	}
+	else if(compare(val, cur->val) == 1){
+
+	}
+	else if(compare(val, cur->val) == 0){
+
+	}
     /*write this*/
     return NULL;
 
