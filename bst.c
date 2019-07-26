@@ -277,7 +277,7 @@ struct Node *_removeLeftMost(struct Node *cur)
 struct Node *_removeNode(struct Node *cur, TYPE val)
 {
 	assert(cur != NULL && val != NULL);
-	struct Node* tempLeft, tempRight;
+	struct Node* temp;
 	if(cur == NULL)
 		return;
 	if(compare(val, cur->val) == -1){
@@ -287,7 +287,12 @@ struct Node *_removeNode(struct Node *cur, TYPE val)
 
 	}
 	else if(compare(val, cur->val) == 0){
-
+		if(cur->left == NULL && cur->right == NULL){
+			free(cur);
+		}
+		else if(cur->left == NULL || cur->right == NULL){
+			
+		}
 	}
     /*write this*/
     return NULL;
