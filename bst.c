@@ -276,27 +276,30 @@ struct Node *_removeLeftMost(struct Node *cur)
 /*----------------------------------------------------------------------------*/
 struct Node *_removeNode(struct Node *cur, TYPE val)
 {
-	assert(cur != NULL && val != NULL);
-	struct Node* temp;
-	if(cur == NULL)
-		return;
-	if(compare(val, cur->val) == -1){
-
-	}
-	else if(compare(val, cur->val) == 1){
-
-	}
-	else if(compare(val, cur->val) == 0){
-		if(cur->left == NULL && cur->right == NULL){
+	assert(cur != NULL);
+	assert(val != NULL);
+	
+	struct Node *treeNode;
+	if(compare(val, cur->val) == 0)
+    	{
+       		if(cur->right == 0)
+        	{
+			treeNode = cur->left;
 			free(cur);
+			return treeNode;
 		}
-		else if(cur->left == NULL || cur->right == NULL){
-			
-		}
+        	cur->val = _leftMost(cur->right);
+		cur->right = _removeLeftMost(cur->right);
 	}
-    /*write this*/
-    return NULL;
-
+	else if(compare(val,cur->val) < 0)
+	{
+		cur->left = _removeNode(cur->left, val);
+	}
+	else
+    {
+        cur->right = _removeNode(cur->right, val);
+    }
+    return cur;
 }
 /*
  function to remove a value from the binary search tree
