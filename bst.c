@@ -42,7 +42,7 @@ struct BSTree {
 void initBSTree(struct BSTree *tree)
 {
 	tree->cnt  = 0;
-	tree->root = 0;
+	tree->root = NULL;
 }
 
 /*
@@ -50,15 +50,14 @@ void initBSTree(struct BSTree *tree)
  param: none
  pre: none
  post: tree->count = 0
-	tree->root = 0;
+	tree->root = NULL;
  */
 
 struct BSTree*  newBSTree()
 {
-	struct BSTree *tree = (struct BSTree *)malloc(sizeof(struct
-BSTree));
+	struct BSTree *tree = (struct BSTree *)malloc(sizeof(struct BSTree));
 	assert(tree != 0);
-
+	printf("BSTree is created, memory allocated\n");
 	initBSTree(tree);
 	return tree;
 }
@@ -91,10 +90,11 @@ void _freeBST(struct Node *node)
  */
 void clearBSTree(struct BSTree *tree)
 {
-    if ( tree->root != 0) {
-	_freeBST(tree->root);
-	tree->root = 0;
-    }
+	if ( tree->root != 0) {
+		_freeBST(tree->root);
+		tree->root = 0;
+  }
+	printf("Recursive tree clear complete, reseting cnt(97)\n");
 	tree->cnt  = 0;
 }
 
@@ -119,6 +119,7 @@ void deleteBSTree(struct BSTree *tree)
  param: tree    the binary search tree
  pre:  tree is not null
  */
+ ////////////////////    THIS LOOKS WRONG.
 int isEmptyBSTree(struct BSTree *tree) { return (tree->cnt == 0); }
 
 /*
@@ -140,12 +141,15 @@ int sizeBSTree(struct BSTree *tree) { return tree->cnt; }
 struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to use compare function
 {
     struct Node* newNode;
+
+		printf("This is the node addition, adding val: %d(145)", *(int*)val);
+
     assert(newNode != 0);
     if(cur == NULL){
 		newNode = malloc(sizeof(struct Node));
         newNode->val = val;
-		newNode->left = NULL;
-		newNode->right = NULL;
+				newNode->left = NULL;
+				newNode->right = NULL;
         return newNode;
     }
     else if (compare(val, cur->val) == -1){	//this if statement guides down the left subtree of the current node
@@ -154,13 +158,13 @@ struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to
     else if(compare(val, cur->val) == 1){	//guides down the right subtree of the current node
         _addNode(cur->right, val);
     }
-	else if(compare(val, cur->val) == 0){	//BST has no duplicate values thus rejects all attempts at inputting a duplicate value
-		newNode = malloc(sizeof(struct Node));	//creates the new node
-        newNode->val = val;						//sets the new node value
-		newNode->left = cur->left;				//connects the new node left pointer to the node that will be below it
-		newNode->right = NULL;					//sets new node right pointer to NULL
-		cur->left = newNode;					//sets cur node left pointer to the newly made node
-	}
+		else if(compare(val, cur->val) == 0){	//BST has no duplicate values thus rejects all attempts at inputting a duplicate value
+				newNode = malloc(sizeof(struct Node));	//creates the new node
+        newNode->val = val;											//sets the new node value
+				newNode->left = cur->left;							//connects the new node left pointer to the node that will be below it
+				newNode->right = NULL;									//sets new node right pointer to NULL
+				cur->left = newNode;										//sets cur node left pointer to the newly made node
+		}
     return cur;
 }
 
@@ -176,6 +180,7 @@ struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to
  */
 void addBSTree(struct BSTree *tree, TYPE val)
 {
+	printf("Current value being added to tree: %d(180)\n", *(int*)val);
 	tree->root = _addNode(tree->root, val);
 	tree->cnt++;
 }
@@ -278,7 +283,7 @@ struct Node *_removeNode(struct Node *cur, TYPE val)
 {
 	assert(cur != NULL);
 	assert(val != NULL);
-	
+
 	struct Node *treeNode;
 	if(compare(val, cur->val) == 0)
     	{
@@ -320,7 +325,7 @@ void removeBSTree(struct BSTree *tree, TYPE val)
 
 /*----------------------------------------------------------------------------*/
 
-
+/////////////   WHAT IS THIS?
 #if 1
 #include <stdio.h>
 
@@ -357,6 +362,7 @@ struct TestValues
 void initValue(struct data* value, int number, const char* name)
 {
     value->number = number;
+		printf("This number is added to the TestValues intitilization: %d(365)\n", number);
     value->name = malloc((strlen(name) + 1) * sizeof(char));
     strcpy(value->name, name);
 }
@@ -371,6 +377,7 @@ struct TestValues* createValues()
     struct TestValues* values = malloc(sizeof(struct TestValues));
     values->n = 4;
     values->values = malloc(values->n * sizeof(struct data));
+
 
     initValue(&(values->values[0]), 50, "rooty");
     initValue(&(values->values[1]), 13, "lefty");
@@ -407,56 +414,50 @@ void testAddNode()
 {
     struct TestValues* tv = createValues();
     struct BSTree *tree	= newBSTree();
+		printf("Values and Trees made.(411)\n");
 
     // Add all values to the tree
-    for (int i = 0; i < tv->n; ++i)
-    {
+    for (int i = 0; i < tv->n; ++i){
+				printf("testAddNode for loop: %d Value: %d(415)\n", i, tv->values[i]);
         addBSTree(tree, &(tv->values[i]));
-        if (tree->cnt != i + 1)
-        {
+        if (tree->cnt != i + 1){
             printf("addNode() test: FAIL to increase count when inserting\n");
             return;
         }
+				printf("Current tree count: %d\n", tree->cnt);
     }
 
     // Check that root node is rooty
-    if (tree->root->val != &(tv->values[0]))
-    {
+    if (tree->root->val != &(tv->values[0])){
         printf("addNode() test: FAIL to insert 50 as root\n");
         return;
     }
-    else
-    {
+    else{
         printf("addNode() test: PASS when adding 50 as root\n");
     }
 
-    if (tree->root->left->val != &(tv->values[1]))
-    {
+    if (tree->root->left->val != &(tv->values[1])){
         printf("addNode() test: FAIL to insert 13 as left child of root\n");
         return;
     }
-    else
-    {
+    else{
         printf("addNode() test: PASS when adding 13 as left of root\n");
     }
 
-    if (tree->root->right->val != &(tv->values[2]))
-    {
+    if (tree->root->right->val != &(tv->values[2])){
         printf("addNode() test: FAIL to insert 110 as right child of root\n");
         return;
     }
-    else
-    {
+    else{
         printf("addNode() test: PASS when adding 110 as right of root\n");
     }
 
-    if (tree->root->left->left->val != &(tv->values[3]))
-    {
+    if (tree->root->left->left->val != &(tv->values[3])){
         printf("addNode() test: FAIL to insert 10 as left child of left of root\n");
         return;
     }
-    else
-    {
+
+    else{
         printf("addNode() test: PASS when adding 10 as left of left of root\n");
     }
 
@@ -592,21 +593,23 @@ int main(int argc, char *argv[]){
    /* After implementing your code, you must uncomment the following calls to the test functions and test your code. Otherwise, you will not receive any
 points */
 
-  	//testAddNode();
+  	testAddNode();
+	printf("testAddNode Executed.\n");
 
-	printf("\n");
-  	//testContainsBSTree();
+  	testContainsBSTree();
+	printf("testContainsBSTree Executed\n");
 
-	printf("\n");
-       //testLeftMost();
+       testLeftMost();
+	printf("testLeftMost Executed\n");
 
-	printf("\n");
-    //testRemoveLeftMost();
+    testRemoveLeftMost();
+	printf("testRemoveLeftMost Executed\n");
 
-	printf("\n");
-    //testRemoveNode();
+    testRemoveNode();
+	printf("testRemoveNode Executed.\n");
 
 
+	printf("End of main function, and program.\n");
 	return 0;
 
 
