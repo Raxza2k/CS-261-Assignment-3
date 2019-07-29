@@ -57,7 +57,6 @@ struct BSTree*  newBSTree()
 {
 	struct BSTree *tree = (struct BSTree *)malloc(sizeof(struct BSTree));
 	assert(tree != 0);
-	printf("BSTree is created, memory allocated\n");
 	initBSTree(tree);
 	return tree;
 }
@@ -138,20 +137,26 @@ int sizeBSTree(struct BSTree *tree) { return tree->cnt; }
  		val	the value to be added to the binary search tree
  pre:	val is not null
  */
-struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to use compare function
+struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to use compare function////////////////////////////////////
 {
     struct Node* newNode;
 
-		printf("This is the node addition, adding val: %d(145)", *(int*)val);
 
     assert(newNode != 0);
     if(cur == NULL){
-		newNode = malloc(sizeof(struct Node));
+				newNode = (struct Node*) malloc(sizeof(struct Node));
+				assert(newNode != NULL);
         newNode->val = val;
 				newNode->left = NULL;
 				newNode->right = NULL;
         return newNode;
     }
+
+
+    if(compare(cur->val, val) <= 0) cur->right = _addNode(cur->right, val);
+    else cur->left = _addNode(cur->left, val);
+
+		/*
     else if (compare(val, cur->val) == -1){	//this if statement guides down the left subtree of the current node
         _addNode(cur->left, val);
     }
@@ -159,12 +164,14 @@ struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to
         _addNode(cur->right, val);
     }
 		else if(compare(val, cur->val) == 0){	//BST has no duplicate values thus rejects all attempts at inputting a duplicate value
-				newNode = malloc(sizeof(struct Node));	//creates the new node
+				newNode = (struct Node*) malloc(sizeof(struct Node));	//creates the new node
         newNode->val = val;											//sets the new node value
 				newNode->left = cur->left;							//connects the new node left pointer to the node that will be below it
 				newNode->right = NULL;									//sets new node right pointer to NULL
 				cur->left = newNode;										//sets cur node left pointer to the newly made node
 		}
+		*/
+
     return cur;
 }
 
@@ -180,7 +187,6 @@ struct Node *_addNode(struct Node *cur, TYPE val) //function incorrect, needs to
  */
 void addBSTree(struct BSTree *tree, TYPE val)
 {
-	printf("Current value being added to tree: %d(180)\n", *(int*)val);
 	tree->root = _addNode(tree->root, val);
 	tree->cnt++;
 }
@@ -198,26 +204,27 @@ element
  */
 
 /*----------------------------------------------------------------------------*/
-int containsBSTree(struct BSTree *tree, TYPE val)
+int containsBSTree(struct BSTree *tree, TYPE val)//////////////////////////////////////////////////
 {
 	struct Node* cur = tree->root;
 	assert(tree != NULL && val != NULL);
-	if(cur == NULL)
-		return;
-	containsBSTree(cur->left, val);
-	if(compare(val, cur->val) == 0){
-		return 1;
-	}//check node value, and if the value is not the one being searched for call containsBSTree again with left child until no more left children
-	containsBSTree(cur->right, val);
-	if(compare(val, cur->val) == 0){
-	 	return 1;
- 	}//check node value again, if not in node recursively call containsBSTree until leaf node
-	if(cur == tree->root){
-		printf("Value not in BST.\n");
-	}//if no node has the value,
+
+	while(cur != NULL)
+	{
+		if(compare(val, cur->val) == 0)
+		{
+			return 1;
+		}
+		else if(compare(val, cur->val) < 0)
+		{
+			cur = cur->left;
+		}
+		else
+		{
+			cur = cur->right;
+		}
+	}
 	return 0;
-    /*write this*/
-    return 0;
 }
 
 /*
@@ -229,15 +236,12 @@ int containsBSTree(struct BSTree *tree, TYPE val)
  */
 
 /*----------------------------------------------------------------------------*/
-TYPE _leftMost(struct Node *cur)
+TYPE _leftMost(struct Node *cur)////////////////////////////////////////////////////////////////////
 {
-
 	assert(cur != NULL);
-	if(cur->left != NULL){
-		_leftMost(cur->left);			//recursive function call to find the leftmost child of the initially given node
-	}
+	while(cur->left != NULL)
+		cur = cur->left;
 	return (cur->val);
-
 }
 
 
@@ -253,22 +257,36 @@ Note:  If you do this iteratively, the above hint does not apply.
  post:	the left most node of cur is not in the tree
  */
 /*----------------------------------------------------------------------------*/
-struct Node *_removeLeftMost(struct Node *cur)
+struct Node *_removeLeftMost(struct Node *cur)////////////////////////////////////////////////////
 {
 	assert(cur != NULL);
-	struct Node* temp;							//creates a temp pointer to keep track of leftmost node
-	temp->left = _leftMost(cur);						//gets the leftmost node (in theory)
-	if(temp->left->right == NULL){
-		free(temp->left);
-		temp->left = NULL;
+	struct Node *rightNode;
+
+	if(cur->left != NULL)
+	{
+		cur->left = _removeLeftMost(cur->left);
+		return cur;
 	}
-	else if(temp->left->right != NULL){
-		struct Node* temp2 = temp->left->right;
-		free(temp->left);
-		temp->left = temp2;
+	else
+	{
+		rightNode = cur->right;
+		// free(cur->val);
+		free(cur);
+		return rightNode;
 	}
-    /*write this*/
-    return NULL;
+	// struct Node* temp;							//creates a temp pointer to keep track of leftmost node
+	// temp->left = _leftMost(cur);						//gets the leftmost node (in theory)
+	// if(temp->left->right == NULL){
+	// 	free(temp->left);
+	// 	temp->left = NULL;
+	// }
+	// else if(temp->left->right != NULL){
+	// 	struct Node* temp2 = temp->left->right;
+	// 	free(temp->left);
+	// 	temp->left = temp2;
+	// }
+  //   /*write this*/
+  //   return NULL;
 }
 /*
  recursive helper function to remove a node from the tree
@@ -279,7 +297,7 @@ struct Node *_removeLeftMost(struct Node *cur)
 		val is not null
  */
 /*----------------------------------------------------------------------------*/
-struct Node *_removeNode(struct Node *cur, TYPE val)
+struct Node *_removeNode(struct Node *cur, TYPE val)//////////////////////////////////////////
 {
 	assert(cur != NULL);
 	assert(val != NULL);
@@ -334,7 +352,7 @@ void printNode(struct Node *cur) {
 	 if (cur == 0) return;
 	 printf("(");
 	 printNode(cur->left);
-	 /*Call print_type which prints the value of the TYPE*/
+	 /*Call print_type which prints the value of the TYPE*////////////////////////////////////////////
 	 print_type(cur->val);
 	 printNode(cur->right);
 	 printf(")");
@@ -359,12 +377,11 @@ struct TestValues
     int n;
 };
 
-void initValue(struct data* value, int number, const char* name)
+void initValue(struct data* values, int number, const char* name)
 {
-    value->number = number;
-		printf("This number is added to the TestValues intitilization: %d(365)\n", number);
-    value->name = malloc((strlen(name) + 1) * sizeof(char));
-    strcpy(value->name, name);
+    values->number = number;
+    values->name = malloc((strlen(name) + 1) * sizeof(char));
+    strcpy(values->name, name);
 }
 
 void freeValue(struct data* value)
@@ -374,17 +391,17 @@ void freeValue(struct data* value)
 
 struct TestValues* createValues()
 {
-    struct TestValues* values = malloc(sizeof(struct TestValues));
-    values->n = 4;
-    values->values = malloc(values->n * sizeof(struct data));
+    struct TestValues* newList = malloc(sizeof(struct TestValues));
+    newList->n = 4;
+    newList->values = malloc(newList->n * sizeof(struct data));
 
 
-    initValue(&(values->values[0]), 50, "rooty");
-    initValue(&(values->values[1]), 13, "lefty");
-    initValue(&(values->values[2]), 110, "righty");
-    initValue(&(values->values[3]), 10, "lefty of lefty");
+    initValue(&(newList->values[0]), 50, "rooty");
+    initValue(&(newList->values[1]), 13, "lefty");
+    initValue(&(newList->values[2]), 110, "righty");
+    initValue(&(newList->values[3]), 10, "lefty of lefty");
 
-    return values;
+    return newList;
 }
 
 void destroyValues(struct TestValues* values)
@@ -414,17 +431,15 @@ void testAddNode()
 {
     struct TestValues* tv = createValues();
     struct BSTree *tree	= newBSTree();
-		printf("Values and Trees made.(411)\n");
 
     // Add all values to the tree
     for (int i = 0; i < tv->n; ++i){
-				printf("testAddNode for loop: %d Value: %d(415)\n", i, tv->values[i]);
-        addBSTree(tree, &(tv->values[i]));
+
         if (tree->cnt != i + 1){
             printf("addNode() test: FAIL to increase count when inserting\n");
             return;
         }
-				printf("Current tree count: %d\n", tree->cnt);
+				// printf("Current tree count: %d\n", tree->cnt);
     }
 
     // Check that root node is rooty
@@ -433,6 +448,7 @@ void testAddNode()
         return;
     }
     else{
+				printf("addNote() test is loking at: %d\n", tree->root->val);
         printf("addNode() test: PASS when adding 50 as root\n");
     }
 
@@ -544,6 +560,7 @@ void testRemoveLeftMost()
     tree->root = _removeLeftMost(tree->root);
     --(tree->cnt);
     printTestResult(tree->root == oldRoot, "_removeLeftMost", "removing leftmost of root 2st try");
+
 
     deleteBSTree(tree);
     destroyValues(tv);
